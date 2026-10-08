@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bai · 个人引导页</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root {
+    --accent: #E8954A;
+    --accent-soft: #F0A560;
+    --text: #F5F2EC;
+    --text-dim: rgba(245,242,236,0.55);
+    --text-mid: rgba(245,242,236,0.75);
+    --card-bg: rgba(20, 26, 22, 0.55);
+    --card-border: rgba(255,255,255,0.08);
+    --bg: #0A0F0C;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    color: var(--text);
+    display: flex; justify-content: center;
+    padding: 3.5rem 1.25rem 3rem;
+    position: relative; overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    background: var(--bg);
+  }
+  .bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-color: #0A0F0C;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    transition: opacity 1.2s ease, background-image 0.8s ease;
+  }
+  .bg-layer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    /* 遮罩偏淡，让雪山更亮更通透 */
+    background: linear-gradient(
+      180deg,
+      rgba(10,15,12,0.25) 0%,
+      rgba(10,15,12,0.15) 35%,
+      rgba(10,15,12,0.45) 70%,
+      rgba(10,15,12,0.78) 100%
+    );
+    pointer-events: none;
+  }
+  .glow {
+    position: fixed; top: -20%; left: 50%; transform: translateX(-50%);
+    width: 80vw; height: 60vh;
+    background: radial-gradient(ellipse at center, rgba(232,149,74,0.14), transparent 70%);
+    z-index: 1; pointer-events: none;
+    animation: breathe 8s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+    50% { opacity: 1; transform: translateX(-50%) scale(1.08); }
+  }
+  .container {
+    width: 100%; max-width: 720px; position: relative; z-index: 2;
+    display: flex; flex-direction: column; gap: 2.5rem;
+  }
+  .header { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.85rem; }
+  .avatar {
+    width: 96px; height: 96px; border-radius: 50%; overflow: hidden;
+    box-shadow: 0 10px 40px rgba(232,149,74,0.35), inset 0 1px 0 rgba(255,255,255,0.3);
+    margin-bottom: 0.25rem; border: 3px solid rgba(255,255,255,0.12);
+    animation: float 6s ease-in-out infinite; background: #1B2820;
+  }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  .name { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; color: var(--text); text-shadow: 0 2px 20px rgba(0,0,0,0.5); min-height: 1.3em; }
+  .name .cursor { display: inline-block; width: 2px; height: 1em; background: var(--accent); margin-left: 3px; vertical-align: -0.12em; animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .tagline { font-size: 13px; color: var(--text-dim); letter-spacing: 0.1em; text-shadow: 0 1px 10px rgba(0,0,0,0.6); }
+  .stats { display: flex; gap: 22px; margin-top: 0.4rem; font-size: 12px; color: var(--text-mid); flex-wrap: wrap; justify-content: center; }
+  .stats span { display: flex; align-items: center; gap: 6px; }
+  .stats i { color: var(--accent); font-size: 11px; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  @media (min-width: 580px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+  .card {
+    position: relative; height: 128px; border-radius: 18px; background: var(--card-bg);
+    border: 1px solid var(--card-border); backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%); cursor: pointer; overflow: hidden;
+    transition: all .35s cubic-bezier(.25,.46,.45,.94); -webkit-tap-highlight-color: transparent;
+  }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent); opacity: 0.6; }
+  .card:hover { border-color: rgba(232,149,74,0.35); transform: translateY(-4px); box-shadow: 0 18px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(232,149,74,0.12); }
+  .card:active { transform: translateY(-2px) scale(0.99); }
+  .card-face { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px; }
+  .card-icon { width: 40px; height: 40px; border-radius: 12px; background: rgba(232,149,74,0.12); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--accent); transition: transform .3s; }
+  .card:hover .card-icon { transform: scale(1.08); }
+  .card-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .card-hint { font-size: 10.5px; color: var(--text-dim); }
+  .section-title { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
+  .section-title i { color: var(--accent); font-size: 14px; }
+  .section-title .count { margin-left: auto; font-size: 12px; font-weight: 500; color: var(--text-dim); background: rgba(255,255,255,0.05); padding: 3px 10px; border-radius: 20px; }
+  .photo-section { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 18px 16px 16px; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+  .photo-toolbar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 12px; border: 1px solid var(--card-border); background: rgba(255,255,255,0.04); color: var(--text-mid); font-size: 12.5px; font-weight: 500; font-family: inherit; cursor: pointer; transition: all .2s; }
+  .btn:hover { border-color: rgba(232,149,74,0.4); color: var(--accent); background: rgba(232,149,74,0.08); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #0A0F0C; font-weight: 600; }
+  .btn-primary:hover { background: var(--accent-soft); border-color: var(--accent-soft); color: #0A0F0C; }
+  /* 固定高度 + 内部滚动的标准双列格子 */
+  .photo-wall {
+    display: grid;
+    grid-template-columns: 1.25fr 0.9fr; /* 左列更宽偏长图，右列更窄 */
+    gap: 10px;
+    align-content: start;
+    height: 400px;
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(232,149,74,0.45) rgba(255,255,255,0.06);
+  }
+  .photo-wall::-webkit-scrollbar { width: 6px; }
+  .photo-wall::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+    border-radius: 6px;
+  }
+  .photo-wall::-webkit-scrollbar-thumb {
+    background: rgba(232,149,74,0.45);
+    border-radius: 6px;
+  }
+  .photo-wall::-webkit-scrollbar-thumb:hover {
+    background: rgba(232,149,74,0.7);
+  }
+  @media (max-width: 420px) {
+    .photo-wall {
+      grid-template-columns: 1.15fr 0.95fr;
+      height: 340px;
+      max-height: 340px;
+      gap: 8px;
+    }
+  }
+  .photo-item {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(0,0,0,0.35);
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: transform .25s, box-shadow .25s;
+    /* 左列默认：偏长竖图格子 */
+    aspect-ratio: 3 / 4;
+  }
+  /* 右列：更窄、略偏方的格子 */
+  .photo-item:nth-child(2n) {
+    aspect-ratio: 4 / 5;
+  }
+  .photo-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.4);
+    border-color: rgba(232,149,74,0.25);
+  }
+  .photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+  .photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(transparent 45%, rgba(0,0,0,0.7));
+    opacity: 0;
+    transition: opacity .25s;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 10px;
+  }
+  .photo-item:hover .photo-overlay { opacity: 1; }
+  .photo-caption {
+    font-size: 11.5px;
+    color: #fff;
+    line-height: 1.35;
+    margin-bottom: 6px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .photo-like {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #fff;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(6px);
+    padding: 4px 9px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .2s;
+  }
+  .photo-like:hover { background: rgba(232,149,74,0.5); }
+  .photo-like.liked { color: var(--accent); }
+  .photo-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 48px 16px;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+  .photo-empty i {
+    display: block;
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: rgba(232,149,74,0.4);
+  }
+  .lightbox { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; flex-direction: column; padding: 20px; }
+  .lightbox.show { display: flex; }
+  .lightbox img { max-width: 100%; max-height: 78vh; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); object-fit: contain; }
+  .lb-caption { margin-top: 14px; font-size: 13px; color: var(--text-mid); text-align: center; max-width: 480px; }
+  .lb-close { position: absolute; top: 18px; right: 18px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.08); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .lb-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.08); color: #fff; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .lb-prev { left: 16px; } .lb-next { right: 16px; }
+  .lb-like { margin-top: 12px; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.08); color: #fff; font-size: 13px; cursor: pointer; font-family: inherit; }
+  .lb-like.liked { color: var(--accent); border-color: rgba(232,149,74,0.4); }
+  .upload-modal, .modal { position: fixed; inset: 0; z-index: 900; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; padding: 20px; }
+  .upload-modal.show, .modal.show { display: flex; }
+  .upload-card, .modal-card { width: 100%; max-width: 380px; background: #141A16; border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; position: relative; box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+  .upload-card h3, .modal-name { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .upload-card p, .modal-hint { font-size: 12px; color: var(--text-dim); margin-bottom: 16px; }
+  .modal-close, .upload-close { position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; border-radius: 50%; border: none; background: rgba(255,255,255,0.06); color: var(--text-dim); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .upload-drop { border: 1.5px dashed rgba(255,255,255,0.15); border-radius: 14px; padding: 28px 16px; text-align: center; cursor: pointer; transition: all .2s; margin-bottom: 14px; }
+  .upload-drop:hover, .upload-drop.dragover { border-color: var(--accent); background: rgba(232,149,74,0.06); }
+  .upload-drop i { font-size: 28px; color: var(--accent); margin-bottom: 8px; display: block; }
+  .upload-drop span { font-size: 12.5px; color: var(--text-dim); }
+  .upload-preview { display: none; margin-bottom: 14px; border-radius: 12px; overflow: hidden; max-height: 180px; }
+  .upload-preview img { width: 100%; display: block; object-fit: cover; max-height: 180px; }
+  .form-input { width: 100%; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: var(--text); font-size: 13px; font-family: inherit; outline: none; margin-bottom: 12px; transition: border-color .2s; }
+  .form-input:focus { border-color: rgba(232,149,74,0.5); }
+  .form-input::placeholder { color: var(--text-dim); }
+  .upload-actions { display: flex; gap: 10px; }
+  .upload-actions .btn { flex: 1; justify-content: center; padding: 10px; }
+  .board { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 18px 16px 16px; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+  .board-input-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .board-input { flex: 1; min-width: 0; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: var(--text); font-size: 13px; font-family: inherit; outline: none; transition: border-color .2s; }
+  .board-input:focus { border-color: rgba(232,149,74,0.5); background: rgba(255,255,255,0.06); }
+  .board-input::placeholder { color: var(--text-dim); }
+  #boardName { max-width: 110px; flex: 0 0 110px; }
+  .board-send { flex-shrink: 0; padding: 0 16px; border-radius: 12px; border: none; background: var(--accent); color: #0A0F0C; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all .2s; }
+  .board-send:hover { background: var(--accent-soft); transform: scale(1.03); }
+  .board-send:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .board-list { display: flex; flex-direction: column; gap: 10px; }
+  .board-item { display: flex; gap: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); animation: slideIn .35s ease; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+  .board-avatar { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #E8954A, #C77B3A); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #0A0F0C; }
+  .board-body { flex: 1; min-width: 0; }
+  .board-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; flex-wrap: wrap; }
+  .board-user { font-size: 12px; font-weight: 600; color: var(--accent); }
+  .board-time { font-size: 10.5px; color: var(--text-dim); }
+  .board-text { font-size: 12.5px; color: var(--text-mid); line-height: 1.55; word-break: break-word; white-space: pre-wrap; max-height: 7.5em; overflow-y: auto; }
+  .board-like-btn { margin-left: auto; display: inline-flex; align-items: center; gap: 3px; font-size: 11px; color: var(--text-dim); background: transparent; border: none; cursor: pointer; padding: 2px 6px; border-radius: 8px; font-family: inherit; transition: color .2s; }
+  .board-like-btn:hover, .board-like-btn.liked { color: var(--accent); }
+  .board-empty { text-align: center; padding: 28px 12px; color: var(--text-dim); font-size: 13px; }
+  .modal-icon { width: 48px; height: 48px; border-radius: 14px; background: rgba(232,149,74,0.12); display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--accent); margin-bottom: 12px; }
+  .text-box { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(255,255,255,0.08); }
+  .text-value { flex: 1; font-size: 15px; font-weight: 600; letter-spacing: 0.02em; word-break: break-all; }
+  .copy-btn { width: 36px; height: 36px; border-radius: 10px; border: none; background: var(--accent); color: #0A0F0C; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .footer { text-align: center; font-size: 12px; color: var(--text-dim); padding-top: 0.5rem; }
+  .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1B2820; border: 1px solid rgba(232,149,74,0.35); color: var(--text); padding: 10px 20px; border-radius: 12px; font-size: 13px; z-index: 2000; opacity: 0; transition: all .3s; pointer-events: none; box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="bg-layer" id="bgLayer"></div>
+<div class="glow"></div>
+<div class="container">
+  <header class="header">
+    <div class="avatar"><img src="avatar.jpg" alt="头像"></div>
+    <h1 class="name"><span id="typedText"></span><span class="cursor"></span></h1>
+    <p class="tagline">徒步 · 旅行 · 在路上</p>
+    <div class="stats">
+      <span><i class="fa-solid fa-mountain"></i> 18+ 条线路</span>
+      <span><i class="fa-solid fa-route"></i> 1000+ km</span>
+      <span id="photoStat" style="display:none"><i class="fa-solid fa-camera"></i> <span id="photoStatNum">0</span> 张照片</span>
+    </div>
+  </header>
+  <div class="grid">
+    <div class="card" data-type="text" data-name="微信" data-value="bai06128"><div class="card-face"><div class="card-icon"><i class="fa-brands fa-weixin"></i></div><span class="card-name">微信</span><span class="card-hint">点击查看微信号</span></div></div>
+    <div class="card" data-type="text" data-name="QQ" data-value="3489883317"><div class="card-face"><div class="card-icon"><i class="fa-brands fa-qq"></i></div><span class="card-name">QQ</span><span class="card-hint">点击查看 QQ 号</span></div></div>
+    <div class="card" data-type="link" data-name="X" data-link="https://x.com/Baitb6"><div class="card-face"><div class="card-icon"><i class="fa-brands fa-x-twitter"></i></div><span class="card-name">X</span><span class="card-hint">点击跳转主页</span></div></div>
+    <div class="card" data-type="link" data-name="Instagram" data-link="https://www.instagram.com/baitb6"><div class="card-face"><div class="card-icon"><i class="fa-brands fa-instagram"></i></div><span class="card-name">Instagram</span><span class="card-hint">点击跳转主页</span></div></div>
+    <div class="card" data-type="link" data-name="抖音" data-link="https://v.douyin.com/rB4XXYbNi9Y/"><div class="card-face"><div class="card-icon"><i class="fa-brands fa-tiktok"></i></div><span class="card-name">抖音</span><span class="card-hint">点击跳转主页</span></div></div>
+    <div class="card" data-type="link" data-name="个人网站" data-link="http://www.slongb.xyz/"><div class="card-face"><div class="card-icon"><i class="fa-solid fa-mountain"></i></div><span class="card-name">个人网站</span><span class="card-hint">点击跳转主页</span></div></div>
+  </div>
+  <section class="photo-section">
+    <div class="section-title"><i class="fa-solid fa-images"></i> 照片墙 <span class="count" id="photoCount">加载中…</span></div>
+    <div class="photo-toolbar"><button class="btn btn-primary" id="btnUpload"><i class="fa-solid fa-cloud-arrow-up"></i> 上传照片</button></div>
+    <div class="photo-wall" id="photoWall"><div class="photo-empty"><i class="fa-solid fa-mountain-sun"></i>还没有照片，上传第一张吧</div></div>
+  </section>
+  <section class="board">
+    <div class="section-title"><i class="fa-solid fa-comment-dots"></i> 留言板 <span class="count" id="boardCount">加载中…</span></div>
+    <div class="board-input-row">
+      <input type="text" class="board-input" id="boardName" placeholder="你的名字" maxlength="12">
+      <input type="text" class="board-input" id="boardMsg" placeholder="说点什么…" maxlength="100">
+      <button class="board-send" id="boardSend"><i class="fa-solid fa-paper-plane"></i> 发送</button>
+    </div>
+    <div class="board-list" id="boardList"><div class="board-empty">加载中…</div></div>
+  </section>
+  <footer class="footer"><p>© 2026 Bai · 保持热爱，奔赴山海</p></footer>
+</div>
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <button class="modal-close" aria-label="关闭">&times;</button>
+    <div class="modal-icon" id="modalIcon"></div>
+    <div class="modal-name" id="modalName"></div>
+    <p class="modal-hint" id="modalHint">复制后前往添加</p>
+    <div class="text-box"><span class="text-value" id="modalValue"></span><button class="copy-btn" id="copyBtn" aria-label="复制"><i class="fa-regular fa-copy"></i></button></div>
+  </div>
+</div>
+<div class="upload-modal" id="uploadModal">
+  <div class="upload-card">
+    <button class="upload-close" id="uploadClose">&times;</button>
+    <h3>上传照片</h3>
+    <p>支持 JPG / PNG / WebP，单张不超过 8MB</p>
+    <div class="upload-drop" id="uploadDrop"><i class="fa-solid fa-image"></i><span>点击或拖拽图片到这里</span></div>
+    <div class="upload-preview" id="uploadPreview"><img id="uploadPreviewImg" alt="预览"></div>
+    <input type="file" id="uploadFile" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+    <input type="text" class="form-input" id="uploadCaption" placeholder="照片说明（可选）" maxlength="120">
+    
+    <div class="upload-actions"><button class="btn" id="uploadCancel">取消</button><button class="btn btn-primary" id="uploadSubmit"><i class="fa-solid fa-cloud-arrow-up"></i> 上传</button></div>
+  </div>
+</div>
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lbClose"><i class="fa-solid fa-xmark"></i></button>
+  <button class="lb-nav lb-prev" id="lbPrev"><i class="fa-solid fa-chevron-left"></i></button>
+  <button class="lb-nav lb-next" id="lbNext"><i class="fa-solid fa-chevron-right"></i></button>
+  <img id="lbImg" src="" alt="">
+  <div class="lb-caption" id="lbCaption"></div>
+  <button class="lb-like" id="lbLike"><i class="fa-regular fa-heart"></i> <span id="lbLikeNum">0</span></button>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const API_BASE='api';
+
+function parseJSON(text){
+  try { return JSON.parse(text); } catch(e){
+    const i = text.indexOf('{');
+    if (i >= 0) { try { return JSON.parse(text.slice(i)); } catch(e2){} }
+    throw e;
+  }
+}
+
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2200);}
+function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function formatTime(ts){const d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+const titles=['Bai','山高万仞','只登一步'];const typedEl=document.getElementById('typedText');let titleIndex=0,charIndex=0,isDeleting=false;
+function typeLoop(){const current=titles[titleIndex];if(isDeleting){typedEl.textContent=current.substring(0,charIndex-1);charIndex--;}else{typedEl.textContent=current.substring(0,charIndex+1);charIndex++;}let speed=isDeleting?60:120;if(!isDeleting&&charIndex===current.length){speed=2000;isDeleting=true;}else if(isDeleting&&charIndex===0){isDeleting=false;titleIndex=(titleIndex+1)%titles.length;speed=400;}setTimeout(typeLoop,speed);}
+typeLoop();
+
+  /* ========== 随机明亮徒步雪山背景 ========== */
+  const bgImages = [
+    'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=85',
+    'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=1920&q=85',
+    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=85',
+    'https://images.unsplash.com/photo-1483728642382-0746cdebcb97?w=1920&q=85',
+    'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=1920&q=85',
+    'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920&q=85',
+    'https://images.unsplash.com/photo-1478131143081-80f7f84ca84a?w=1920&q=85',
+    'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1920&q=85',
+    'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&q=85',
+    'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1920&q=85'
+  ];
+  (function setRandomBg(){
+    const bgLayer = document.getElementById('bgLayer');
+    if (!bgLayer) return;
+    const url = bgImages[Math.floor(Math.random() * bgImages.length)];
+    const img = new Image();
+    img.onload = function(){
+      bgLayer.style.backgroundImage = "url('" + url + "')";
+    };
+    img.onerror = function(){
+      // 失败则用下一张
+      const fallback = bgImages[(bgImages.indexOf(url) + 1) % bgImages.length];
+      bgLayer.style.backgroundImage = "url('" + fallback + "')";
+    };
+    img.src = url;
+  })();
+
+const modal=document.getElementById('modal'),modalName=document.getElementById('modalName'),modalHint=document.getElementById('modalHint'),modalValue=document.getElementById('modalValue'),modalIcon=document.getElementById('modalIcon'),copyBtn=document.getElementById('copyBtn');
+document.querySelectorAll('.card').forEach(card=>{card.addEventListener('click',()=>{const type=card.dataset.type;if(type==='link'){window.open(card.dataset.link,'_blank');return;}const name=card.dataset.name,value=card.dataset.value;modalName.textContent=name;modalValue.textContent=value;modalHint.textContent=name==='微信'?'复制后前往微信添加':'复制后前往 QQ 添加';modalIcon.innerHTML=card.querySelector('.card-icon').innerHTML;modal.classList.add('show');});});
+modal.querySelector('.modal-close').addEventListener('click',()=>modal.classList.remove('show'));
+modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show');});
+copyBtn.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(modalValue.textContent);toast('已复制');}catch{toast('复制失败，请手动选择');}});
+function likedSet(key){try{return new Set(JSON.parse(localStorage.getItem(key)||'[]'));}catch{return new Set();}}
+function saveLiked(key,set){localStorage.setItem(key,JSON.stringify([...set]));}
+const likedPhotos=likedSet('liked_photos'),likedMsgs=likedSet('liked_msgs');
+async function doLike(id,type){const set=type==='message'?likedMsgs:likedPhotos;const key=type==='message'?'liked_msgs':'liked_photos';if(set.has(id)){toast('已经点过赞了');return null;}try{const res=await fetch(API_BASE+'/photos.php?action=like',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,type})});const data=parseJSON(await res.text());if(data.ok){set.add(id);saveLiked(key,set);return data.likes;}toast(data.error||'点赞失败');}catch{toast('网络错误');}return null;}
+let photos=[],lbIndex=0;
+const photoWall=document.getElementById('photoWall'),photoCount=document.getElementById('photoCount'),lightbox=document.getElementById('lightbox'),lbImg=document.getElementById('lbImg'),lbCaption=document.getElementById('lbCaption'),lbLike=document.getElementById('lbLike'),lbLikeNum=document.getElementById('lbLikeNum');
+function renderPhotos(list){photos=list;photoCount.textContent=list.length+' 张';const stat=document.getElementById('photoStat'),statNum=document.getElementById('photoStatNum');if(list.length>0){stat.style.display='';statNum.textContent=list.length;}if(!list.length){photoWall.innerHTML='<div class="photo-empty"><i class="fa-solid fa-mountain-sun"></i>还没有照片，上传第一张吧</div>';return;}photoWall.innerHTML=list.map((p,i)=>'<div class="photo-item" data-idx="'+i+'"><img src="'+escapeHtml(p.url)+'" alt="'+escapeHtml(p.caption||'')+'" loading="lazy"><div class="photo-overlay">'+(p.caption?'<div class="photo-caption">'+escapeHtml(p.caption)+'</div>':'')+'<button class="photo-like '+(likedPhotos.has(p.id)?'liked':'')+'" data-id="'+p.id+'"><i class="fa-'+(likedPhotos.has(p.id)?'solid':'regular')+' fa-heart"></i><span>'+p.likes+'</span></button></div></div>').join('');photoWall.querySelectorAll('.photo-item').forEach(el=>{el.addEventListener('click',e=>{if(e.target.closest('.photo-like'))return;openLightbox(+el.dataset.idx);});});photoWall.querySelectorAll('.photo-like').forEach(btn=>{btn.addEventListener('click',async e=>{e.stopPropagation();const id=+btn.dataset.id;const likes=await doLike(id,'photo');if(likes!==null){btn.classList.add('liked');btn.querySelector('i').className='fa-solid fa-heart';btn.querySelector('span').textContent=likes;const p=photos.find(x=>x.id===id);if(p)p.likes=likes;if(lightbox.classList.contains('show')&&photos[lbIndex]&&photos[lbIndex].id===id){lbLike.classList.add('liked');lbLike.querySelector('i').className='fa-solid fa-heart';lbLikeNum.textContent=likes;}}});});}
+async function loadPhotos(){try{const res=await fetch(API_BASE+'/photos.php?limit=60');const data=parseJSON(await res.text());if(data.ok)renderPhotos(data.list);else photoWall.innerHTML='<div class="photo-empty">加载失败</div>';}catch{photoWall.innerHTML='<div class="photo-empty">网络错误</div>';}}
+function openLightbox(idx){lbIndex=idx;const p=photos[idx];if(!p)return;lbImg.src=p.url;lbCaption.textContent=p.caption||'';lbLikeNum.textContent=p.likes;lbLike.classList.toggle('liked',likedPhotos.has(p.id));lbLike.querySelector('i').className=likedPhotos.has(p.id)?'fa-solid fa-heart':'fa-regular fa-heart';lightbox.classList.add('show');}
+function closeLightbox(){lightbox.classList.remove('show');}
+function lbNav(dir){if(!photos.length)return;lbIndex=(lbIndex+dir+photos.length)%photos.length;openLightbox(lbIndex);}
+document.getElementById('lbClose').addEventListener('click',closeLightbox);
+document.getElementById('lbPrev').addEventListener('click',()=>lbNav(-1));
+document.getElementById('lbNext').addEventListener('click',()=>lbNav(1));
+lightbox.addEventListener('click',e=>{if(e.target===lightbox)closeLightbox();});
+document.addEventListener('keydown',e=>{if(!lightbox.classList.contains('show'))return;if(e.key==='Escape')closeLightbox();if(e.key==='ArrowLeft')lbNav(-1);if(e.key==='ArrowRight')lbNav(1);});
+lbLike.addEventListener('click',async()=>{const p=photos[lbIndex];if(!p)return;const likes=await doLike(p.id,'photo');if(likes!==null){p.likes=likes;lbLikeNum.textContent=likes;lbLike.classList.add('liked');lbLike.querySelector('i').className='fa-solid fa-heart';renderPhotos(photos);openLightbox(lbIndex);}});
+const uploadModal=document.getElementById('uploadModal'),uploadDrop=document.getElementById('uploadDrop'),uploadFile=document.getElementById('uploadFile'),uploadPreview=document.getElementById('uploadPreview'),uploadPreviewImg=document.getElementById('uploadPreviewImg');
+let selectedFile=null;
+document.getElementById('btnUpload').addEventListener('click',()=>uploadModal.classList.add('show'));
+document.getElementById('uploadClose').addEventListener('click',closeUpload);
+document.getElementById('uploadCancel').addEventListener('click',closeUpload);
+uploadModal.addEventListener('click',e=>{if(e.target===uploadModal)closeUpload();});
+function closeUpload(){uploadModal.classList.remove('show');selectedFile=null;uploadFile.value='';uploadPreview.style.display='none';uploadDrop.style.display='';document.getElementById('uploadCaption').value='';}
+uploadDrop.addEventListener('click',()=>uploadFile.click());
+uploadFile.addEventListener('change',()=>{if(uploadFile.files[0])pickFile(uploadFile.files[0]);});
+uploadDrop.addEventListener('dragover',e=>{e.preventDefault();uploadDrop.classList.add('dragover');});
+uploadDrop.addEventListener('dragleave',()=>uploadDrop.classList.remove('dragover'));
+uploadDrop.addEventListener('drop',e=>{e.preventDefault();uploadDrop.classList.remove('dragover');if(e.dataTransfer.files[0])pickFile(e.dataTransfer.files[0]);});
+function pickFile(file){if(!file.type.startsWith('image/')){toast('请选择图片文件');return;}selectedFile=file;uploadPreviewImg.src=URL.createObjectURL(file);uploadPreview.style.display='block';uploadDrop.style.display='none';}
+document.getElementById('uploadSubmit').addEventListener('click',async()=>{if(!selectedFile){toast('请先选择图片');return;}const fd=new FormData();fd.append('photo',selectedFile);fd.append('caption',document.getElementById('uploadCaption').value.trim());fd.append('action','upload');const btn=document.getElementById('uploadSubmit');btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> 上传中';try{const res=await fetch(API_BASE+'/photos.php',{method:'POST',body:fd});const data=parseJSON(await res.text());if(data.ok){toast('上传成功');closeUpload();await loadPhotos();}else toast(data.error||'上传失败');}catch{toast('网络错误');}finally{btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-cloud-arrow-up"></i> 上传';}});
+const boardList=document.getElementById('boardList'),boardCount=document.getElementById('boardCount'),boardName=document.getElementById('boardName'),boardMsg=document.getElementById('boardMsg'),boardSend=document.getElementById('boardSend');
+function renderMessages(list){boardCount.textContent=list.length+' 条';if(!list.length){boardList.innerHTML='<div class="board-empty">还没有留言，来抢沙发吧 🏔️</div>';return;}boardList.innerHTML=list.map(m=>'<div class="board-item"><div class="board-avatar">'+escapeHtml((m.name||'匿').charAt(0).toUpperCase())+'</div><div class="board-body"><div class="board-meta"><span class="board-user">'+escapeHtml(m.name)+'</span><span class="board-time">'+formatTime(m.time)+'</span><button class="board-like-btn '+(likedMsgs.has(m.id)?'liked':'')+'" data-id="'+m.id+'"><i class="fa-'+(likedMsgs.has(m.id)?'solid':'regular')+' fa-heart"></i><span>'+(m.likes||0)+'</span></button></div><div class="board-text">'+escapeHtml(m.msg)+'</div></div></div>').join('');boardList.querySelectorAll('.board-like-btn').forEach(btn=>{btn.addEventListener('click',async()=>{const id=+btn.dataset.id;const likes=await doLike(id,'message');if(likes!==null){btn.classList.add('liked');btn.querySelector('i').className='fa-solid fa-heart';btn.querySelector('span').textContent=likes;}});});}
+async function loadMessages(){try{const res=await fetch(API_BASE+'/get.php?limit=50');const data=parseJSON(await res.text());if(data.ok)renderMessages(data.list);else{boardList.innerHTML='<div class="board-empty">加载失败</div>';boardCount.textContent='—';}}catch{boardList.innerHTML='<div class="board-empty">网络错误，稍后再试</div>';boardCount.textContent='—';}}
+async function sendMessage(){const name=boardName.value.trim(),msg=boardMsg.value.trim();if(!msg){boardMsg.focus();return;}boardSend.disabled=true;boardSend.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> 发送中';try{const res=await fetch(API_BASE+'/post.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,msg})});const data=parseJSON(await res.text());if(data.ok){boardMsg.value='';await loadMessages();}else toast(data.error||'发送失败');}catch{toast('网络错误');}finally{boardSend.disabled=false;boardSend.innerHTML='<i class="fa-solid fa-paper-plane"></i> 发送';}}
+boardSend.addEventListener('click',sendMessage);
+boardMsg.addEventListener('keydown',e=>{if(e.key==='Enter')sendMessage();});
+loadPhotos();loadMessages();
+setInterval(loadMessages,30000);setInterval(loadPhotos,60000);
+</script>
+</body>
+</html>
